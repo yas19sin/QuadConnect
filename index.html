@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quad Connect - AI Powered Connect Four</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto+Mono&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="container nav-container">
+                <a href="#" class="logo">Quad Connect</a>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#journey">The Journey</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="https://github.com/yas19sin/QuadConnect" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section id="hero">
+        <div class="container hero-content">
+            <h1>Quad Connect</h1>
+            <p class="tagline">AI-Powered Connect Four: Outsmart the Thinking Machine!</p>
+            <p class="sub-tagline">Experience Connect Four against an AI trained with Reinforcement Learning (GRPO) on a
+                modern LLM.</p>
+            <a href="https://huggingface.co/spaces/Lyte/QuadConnect-beta" target="_blank"
+                class="cta-button primary">Play Quad Connect Now</a>
+            <a href="https://github.com/yas19sin/QuadConnect" target="_blank" class="cta-button secondary">View Code on
+                GitHub</a>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <img src="images/feature1.png" alt="LLM Brain">
+                    <h3>LLM-Powered Opponent</h3>
+                    <p>Face off against an AI driven by a Qwen2.5-0.5B Large Language Model, fine-tuned specifically for
+                        Connect Four strategy using GRPO.</p>
+                </div>
+                <div class="feature-item">
+                    <img src="images/feature2.png" alt="AI Reasoning">
+                    <h3>Transparent Reasoning</h3>
+                    <p>Peek inside the AI's "mind"! See a step-by-step explanation for every move the AI makes,
+                        understanding its tactical considerations.</p>
+                </div>
+                <div class="feature-item">
+                    <img src="images/feature3.png" alt="Web Gameplay">
+                    <h3>Intuitive Web Interface</h3>
+                    <p>Play seamlessly in your browser with a clean interface built using Gradio, deployed conveniently
+                        on Hugging Face Spaces.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="journey" class="alternate-bg">
+        <div class="container">
+            <h2>The Development Journey</h2>
+            <div class="journey-content">
+                <h3>Concept & Challenge</h3>
+                <p>The idea for Quad Connect stemmed from a desire to explore the application of modern Large Language
+                    Models (LLMs) beyond typical text generation tasks. Could an LLM learn the strategic nuances of a
+                    game like Connect Four? This became the central challenge: not just creating a Connect Four game,
+                    but training an AI opponent that *learns* strategy using techniques like Group Relative Policy
+                    Optimization (GRPO), a method related to Reinforcement Learning.</p>
+
+                <h3>Technology Choices</h3>
+                <p>Python formed the backbone, leveraging the Hugging Face ecosystem: `transformers` and `unsloth` for
+                    model loading,
+                    `datasets` for data handling, and `trl` (specifically the `GRPOTrainer` built on Unsloth
+                    optimizations) for the fine-tuning process. `vLLM` was chosen for efficient inference. For the UI,
+                    Gradio offered a rapid development path for creating an interactive web demo suitable for Hugging
+                    Face Spaces deployment.</p>
+
+                <h3>Data & Training Iterations</h3>
+                <p>The initial `Lyte/ConnectFour-T10` dataset provided game sequences. A key step was transforming this
+                    data into a suitable format for training the LLM to predict the *next move* given a board state.
+                    This involved several iterations (as seen in the `Lyte/ConnectFour-Training-Data` v1, v2, and v3
+                    datasets):</p>
+                <ul>
+                    <li>Initially representing the board simply as a list of moves.</li>
+                    <li>Adding explicit "Next available position" information to help the model identify valid moves.
+                    </li>
+                    <li>Refining the prompt structure and board state clarity.</li>
+                </ul>
+                <p>The training process itself was iterative. Early models learned valid moves but lacked strategy.
+                    Refining the `strategic_winning_reward_func` in GRPO was crucial. Adding rewards for blocking
+                    opponent wins and for setting up future threats, alongside penalties for incorrect moves, gradually
+                    improved the AI's competence. Debugging issues like the persistent negative validity reward required
+                    careful analysis of how training examples were generated versus how rewards were calculated, leading
+                    to the final data processing approach.</p>
+
+                <h3>UI & Deployment</h3>
+                <p>Gradio proved effective for building the user interface quickly. Displaying the board required some
+                    HTML/CSS within a Gradio component. Integrating the LLM involved loading the fine-tuned model and
+                    creating functions to handle the prompt generation, inference call, and response parsing
+                    (`extract_xml_move`). Deployment to Hugging Face Spaces was relatively straightforward using their
+                    Git integration and `requirements.txt`.</p>
+
+                <h3>Results & Learnings</h3>
+                <p>Evaluation showed progress, but also the difficulty of the task. While accuracy on predicting the
+                    *exact* move from the dataset wasn't extremely high (around 10% for v0.0.9b), this metric doesn't
+                    fully capture strategic competence, as multiple valid moves often exist. The final AI responds in
+                    the correct format, tries to avoid obvious blunders, and displays its reasoning. However, achieving
+                    master-level strategic depth likely requires larger models, more diverse training data, and
+                    potentially even more sophisticated reward functions or training techniques. The biggest learning
+                    was the significant effort required to bridge the gap between an LLM's language capabilities and the
+                    spatial/strategic reasoning needed for even simple board games.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2>About Quad Connect & Developer</h2>
+            <div class="about-content">
+                <div class="inspiration">
+                    <h3>Project Inspiration</h3>
+                    <p>
+                        This project was undertaken as a Portfolio Project for the <a
+                            href="https://tech.alxafrica.com/software-engineering-programme-casablanca"
+                            target="_blank">ALX Software Engineering program</a>
+                        (completed within a 2-week development window). The core inspiration was to push the boundaries
+                        of LLM application by training one to play a strategic game. Witnessing the rapid advancements
+                        in AI, I wanted to move beyond traditional game AI algorithms and explore if an LLM could learn
+                        to "think" strategically about Connect Four, using modern fine-tuning methods like GRPO. It
+                        represented a personal challenge to integrate cutting-edge AI techniques with practical game
+                        development.
+                    </p>
+                    <h3>Future Work</h3>
+                    <p>Potential next steps include experimenting with larger LLMs, refining the reward functions
+                        further, exploring different board representations in the prompt, implementing a more
+                        sophisticated UI (perhaps using Unity), and potentially adding features like difficulty levels
+                        or multiplayer.</p>
+                </div>
+                <div class="developer">
+                    <h3>About the Developer</h3>
+                    <p>Yassine Ennaour</p>
+                    <p>A passionate software engineer exploring the intersection of AI, machine learning, and
+                        interactive applications.</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/ennaour/" target="_blank" class="social-icon">LinkedIn</a>
+                        |
+                        <a href="https://github.com/yas19sin" target="_blank" class="social-icon">GitHub</a> |
+                        <a href="https://x.com/Yas19sinDev" target="_blank" class="social-icon">Twitter</a>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        <a href="https://github.com/yas19sin/QuadConnect" target="_blank">View Project Code on
+                            GitHub</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <p>© 2024 Yassine Ennaour. All Rights Reserved.</p>
+            <div class="footer-links">
+                <a href="https://huggingface.co/spaces/Lyte/QuadConnect-beta" target="_blank">Play Game</a> |
+                <a href="https://github.com/yas19sin/QuadConnect" target="_blank">GitHub Repo</a> |
+                <a href="https://www.linkedin.com/in/ennaour/" target="_blank">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
