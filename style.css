@@ -210,6 +210,16 @@ section {
     padding: 5rem 0;
 }
 
+#demo {
+    padding: 2rem 0;
+}
+
+#demo iframe {
+    max-width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
 .alternate-bg {
     background-color: #ffffff;
     /* White background for contrast */
