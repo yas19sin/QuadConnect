@@ -1,136 +1,143 @@
-# QuadConnect2.5-0.5B - A Strategic Connect Four AI
+# QuadConnect - AI Powered Connect Four
 
-![Connect Four Demo](https://cdn-uploads.huggingface.co/production/uploads/62f847d692950415b63c6011/QiDstnBXlVVz6dGrx3uus.png)
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/Lyte/QuadConnect-beta)
+[![Model Card](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue)](Lyte/QuadConnect2.5-0.5B-v0.0.9b)
+[![GitHub Repo stars](https://img.shields.io/github/stars/yas19sin/QuadConnect?style=social)](https://github.com/yas19sin/QuadConnect)
 
-## 🎮 Overview
+![Connect Four Demo Screenshot](images/feature1.png)
 
-QuadConnect is a specialized language model trained to master the game of Connect Four. Built on [Qwen 2.5 (0.5B parameter base)](https://huggingface.co/unsloth/qwen2.5-0.5b-instruct-unsloth-bnb-4bit), this model uses GRPO (Group Relative Policy Optimization) to learn the strategic intricacies of Connect Four gameplay.
+## 📖 Introduction
 
-**Status**: Early training experiments (v0.0.9b) - Reward functions still evolving
+QuadConnect is a project exploring the application of Large Language Models (LLMs) to strategic board games. This repository contains the code for training and deploying an AI opponent for Connect Four, built upon the **Qwen2.5-0.5B-Instruct** model and fine-tuned using **Group Relative Policy Optimization (GRPO)**. The goal was to move beyond traditional rule-based AI and investigate if an LLM could learn strategic reasoning and nuanced gameplay through reinforcement learning techniques.
 
-## 🔗 Links
-- [Model on Hugging Face](https://huggingface.co/Lyte/QuadConnect2.5-0.5B-v0.0.9b)
-- [Interactive Demo](https://huggingface.co/spaces/Lyte/QuadConnect-beta)
+This project was developed as a Portfolio Project for the [ALX Software Engineering program](https://tech.alxafrica.com/software-engineering-programme-casablanca).
 
-## 🔍 Model Details
+**Key Links:**
 
-- **Developed by:** [Lyte](https://hf.co/Lyte)
-- **Model type:** Small Language Model (SLM)
-- **Language:** English
-- **Base model:** [unsloth/qwen2.5-0.5b-instruct-unsloth-bnb-4bit](https://huggingface.co/unsloth/qwen2.5-0.5b-instruct-unsloth-bnb-4bit)
-- **Training method:** [TRL](https://github.com/huggingface/trl)'s GRPO
-- **Training data:** [Lyte/ConnectFour-T10](https://huggingface.co/datasets/Lyte/ConnectFour-T10)
+* **Live Demo:** [Play Quad Connect on Hugging Face Spaces](https://huggingface.co/spaces/Lyte/QuadConnect-beta)
+* **Model Card:** [Lyte/QuadConnect2.5-0.5B-v0.0.9b on Hugging Face](https://huggingface.co/Lyte/QuadConnect2.5-0.5B-v0.0.9b)
+* **Project Blog Post:** [TBD]
+* **Developer LinkedIn:** [LinkedIn](https://www.linkedin.com/in/ennaour/)
 
-## 🚀 Quick Start
+## ✨ Features
 
-### Option 1: Using Transformers
+* **LLM-Powered Opponent:** Play against an AI driven by a fine-tuned Qwen2.5-0.5B model.
+* **Strategic Training (GRPO):** The AI learns through reward functions designed to encourage winning, blocking, and strategic positioning.
+* **Transparent Reasoning:** See the AI's thought process for each move it makes.
+* **Web Interface:** Playable directly in your browser via a Gradio UI deployed on Hugging Face Spaces.
 
-```python
-from transformers import pipeline
+## 🛠️ Installation & Setup
 
-SYSTEM_PROMPT = """You are a master Connect Four strategist whose goal is to win while preventing your opponent from winning. The game is played on a 6x7 grid (columns a–g, rows 1–6 with 1 at the bottom) where pieces drop to the lowest available spot.
+To run the training or inference code locally:
 
-Board:
-- Represented as a list of occupied cells in the format: <column><row>(<piece>), e.g., 'a1(O)'.
-- For example: 'a1(O), a2(X), b1(O)' indicates that cell a1 has an O, a2 has an X, and b1 has an O.
-- An empty board is shown as 'Empty Board'.
-- Win by connecting 4 pieces in any direction (horizontal, vertical, or diagonal).
+1. **Clone the repository:**
 
-Strategy:
-1. Identify taken positions, and empty positions.
-2. Find and execute winning moves.
-3. If There isn't a winning move, then block your opponent's potential wins.
-4. Control the center and set up future moves.
+    ```bash
+    git clone https://github.com/yas19sin/QuadConnect.git
+    cd QuadConnect
+    ```
 
-Respond in XML:
-<reasoning>
-Explain your thought process, focusing on your winning move, how you block your opponent, and your strategic plans.
-</reasoning>
-<move>
-Specify the column letter (a–g) for your next move.
-</move>
-"""
+2. **Set up a Python environment:** (Recommended: use a virtual environment)
 
-board = {
-    "empty": "Game State:\n- You are playing as: X\n- Your previous moves: \n- Opponent's moves: \n- Current board state: Empty Board\n- Next available position per column:  \nColumn a: a1, a2, a3, a4, a5, a6  \nColumn b: b1, b2, b3, b4, b5, b6  \nColumn c: c1, c2, c3, c4, c5, c6  \nColumn d: d1, d2, d3, d4, d5, d6  \nColumn e: e1, e2, e3, e4, e5, e6  \nColumn f: f1, f2, f3, f4, f5, f6  \nColumn g: g1, g2, g3, g4, g5, g6\n\nMake your move.",
-    "one_move": "Game State:\n- You are playing as: X\n- Your previous moves: \n- Opponent's moves: b1\n- Current board state: b1(O)\n- Next available position per column:  \nColumn a: a1, a2, a3, a4, a5, a6  \nColumn b: b2, b3, b4, b5, b6  \nColumn c: c1, c2, c3, c4, c5, c6  \nColumn d: d1, d2, d3, d4, d5, d6  \nColumn e: e1, e2, e3, e4, e5, e6  \nColumn f: f1, f2, f3, f4, f5, f6  \nColumn g: g1, g2, g3, g4, g5, g6\n\nMake your move.",
-    "four_moves": "Game State:\n- You are playing as: X\n- Your previous moves: a1, a2\n- Opponent's moves: d1, a3\n- Current board state: a1(X), d1(O), a2(X), a3(O)\n- Next available position per column:  \nColumn a: a4, a5, a6  \nColumn b: b1, b2, b3, b4, b5, b6  \nColumn c: c1, c2, c3, c4, c5, c6  \nColumn d: d2, d3, d4, d5, d6  \nColumn e: e1, e2, e3, e4, e5, e6  \nColumn f: f1, f2, f3, f4, f5, f6  \nColumn g: g1, g2, g3, g4, g5, g6\n\nMake your move.",
-}
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate # On Windows use `.venv\Scripts\activate`
+    ```
 
-generator = pipeline("text-generation", model="Lyte/QuadConnect2.5-0.5B-v0.0.9b", device="cuda")
+3. **Install dependencies:** Ensure you have CUDA installed if using GPU acceleration.
 
-# use 'empty', 'one_move' or 'four_moves' in board['']
-output = generator([
-    {"role": "system", "content": SYSTEM_PROMPT}, 
-    {"role": "user", "content": board['empty']}
-], max_new_tokens=10245, return_full_text=False)[0]
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-print(output["generated_text"])
-```
+4. **Local Inference(`Optional`):** You can run local inference by either manually following the `Quick Start` instructions in the [Model Card](Lyte/QuadConnect2.5-0.5B-v0.0.9b) or cloning the [Hugging Face Space](https://huggingface.co/spaces/Lyte/QuadConnect-beta)
 
-### Option 2: Using GGUF
+    ```bash
+    # Clone repository
+    git clone https://huggingface.co/spaces/Lyte/QuadConnect-beta
+    cd QuadConnect-beta
 
-Download the [Quantized GGUF (Q8_0)](https://huggingface.co/Lyte/QuadConnect2.5-0.5B-v0.0.9b/blob/main/unsloth.Q8_0.gguf) and use it in your favorite GGUF inference engine (e.g., LMStudio).
+    # Create and activate Python environment
+    python -m venv env
+    source env/bin/activate
 
-### Option 3: Using Hugging Face Space
+    # Install dependencies and run
+    pip install -r requirements.txt
+    python app.py
+    ```
 
-Visit the [QuadConnect Demo Space](https://huggingface.co/spaces/Lyte/QuadConnect-beta) to interact with the model directly. You can also duplicate the space or download its code for local use.
+## 🚀 Usage
 
-## 📊 Evaluation Results
+### Training
 
-Model performance was evaluated on the [Lyte/ConnectFour-T10](https://huggingface.co/datasets/Lyte/ConnectFour-T10) validation split with various temperature settings.
+The core training logic is within `quadconnect.ipynb` and `quadconnect.py`. You can run the cells in a Jupyter environment (like VS Code, Jupyter Lab, or Google Colab/Kaggle with appropriate GPU resources) or if you have a GPU with 12GB VRAM or more you can run it locally.
 
-### Summary Metrics Comparison
+* Don't forget to add your Huggingface Access token if you plan on pushing the model to Hugging Face
+* Modify parameters like `model_name`, `max_seq_length`, `lora_rank`, `training_args` as needed.
+* Ensure you have access to the training dataset (`Lyte/ConnectFour-Training-Data_v3` or similar).
+* Run the training cell: `trainer.train()`.
+* Trained LoRA adapters and merged models can be saved and pushed to the Hugging Face Hub using the provided code cells.
 
-| Metric | v0.0.6b (Temp 0.6) | v0.0.8b (Temp 0.6) | v0.0.9b (Temp 0.6) | v0.0.9b (Temp 0.8) | v0.0.9b (Temp 1.0) |
-|--------|-------------------|-------------------|-------------------|-------------------|-------------------|
-| Total games evaluated | 5082 | 5082 | 5082 | 5082 | 5082 |
-| Correct predictions | 518 | 394 | 516 | **713** | 677 |
-| Accuracy | 10.19% | 7.75% | 10.15% | **14.03%** | 13.32% |
-| Most common move | d (41.14%) | d (67.61%) | a (38.72%) | a (31.01%) | a (26.99%) |
-| Middle column usage | 75.05% | 99.53% | 29.08% | 35.43% | 39.49% |
+### Inference (Python Script Example)
 
-## 🔧 Training Details
+See the "Quick Start" section in the initial part of this README for an example using the `transformers` pipeline.
 
-### Data Preparation
-1. Started with [Leon-LLM/Connect-Four-Datasets-Collection](https://huggingface.co/datasets/Leon-LLM/Connect-Four-Datasets-Collection)
-2. Filtered for clean, complete entries
-3. Further filtered to include only games with 10 or fewer turns
-4. Split into train and validation sets
-5. Final dataset: [Lyte/ConnectFour-T10](https://huggingface.co/datasets/Lyte/ConnectFour-T10)
+### Web Demo
 
-### Evaluation Parameters
-- Temperature: 0.6, 0.8, 1.0 (compared)
-- Top-p: 0.95
-- Max tokens: 1024
+Visit the deployed Hugging Face Space: [Quad Connect Demo](https://huggingface.co/spaces/Lyte/QuadConnect-beta)
 
-### Framework Versions
-- TRL: 0.15.1
-- Transformers: 4.49.0
-- PyTorch: 2.5.1+cu121
-- Datasets: 3.2.0
-- Tokenizers: 0.21.0
+## 🤝 Contributing
 
-## 📚 Citations
+This was primarily a solo project for the ALX program. However, contributions, suggestions, and bug reports are welcome! Please feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/yas19sin/QuadConnect).
 
-For GRPO:
-```bibtex
-@article{zhihong2024deepseekmath,
-    title        = {{DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models}},
-    author       = {Zhihong Shao and Peiyi Wang and Qihao Zhu and Runxin Xu and Junxiao Song and Mingchuan Zhang and Y. K. Li and Y. Wu and Daya Guo},
-    year         = 2024,
-    eprint       = {arXiv:2402.03300},
-}
-```
+## 💡 Related Projects
 
-For TRL:
-```bibtex
-@misc{vonwerra2022trl,
-    title        = {{TRL: Transformer Reinforcement Learning}},
-    author       = {Leandro von Werra and Younes Belkada and Lewis Tunstall and Edward Beeching and Tristan Thrush and Nathan Lambert and Shengyi Huang and Kashif Rasul and Quentin Gallouédec},
-    year         = 2020,
-    journal      = {GitHub repository},
-    publisher    = {GitHub},
-    howpublished = {\url{https://github.com/huggingface/trl}}
-}
-```
+* **Base Model:** [Qwen/Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct)
+* **Optimization:** [Unsloth AI](https://github.com/unslothai/unsloth)
+* **Training Framework:** [Hugging Face TRL](https://github.com/huggingface/trl)
+* **Dataset Inspiration:** [Leon-LLM/Connect-Four-Datasets-Collection](https://huggingface.co/datasets/Leon-LLM/Connect-Four-Datasets-Collection)
+
+## 📜 Licensing
+
+The code in this repository is licensed under the [MIT License](https://opensource.org/license/mit).
+The fine-tuned model weights inherit the license of the base Qwen 2.5 model. Please refer to its specific license for usage details.
+
+## 🧠 The Story & Technical Deep Dive (Optional Task 6)
+
+### Development Journey
+
+My journey developing QuadConnect represents an exploration into reinforcement learning applied to strategic games, combining my interest in AI with RL through GRPO.
+
+**Inspiration Revisited:** The spark for QuadConnect came from an intersection of passion and curiosity. As a student in the ALX Software Engineering program, I wanted my portfolio project to showcase both technical skills and creative problem-solving. Connect Four presented the perfect challenge: a game simple enough for humans to understand yet complex enough to test an AI's strategic reasoning. Traditional game AI relies on tree search algorithms like Minimax, but I was fascinated by a different question: could an LLM learn to play strategically through reinforcement learning, without being explicitly programmed with game rules?
+
+**The GRPO Challenge:** Implementing Group Relative Policy Optimization wasn't just about using the library. The real work lay in crafting the reward functions. My initial attempts used simplistic rewards that only considered win/loss outcomes, resulting in an AI that recognized winning positions but lacked strategic depth. The breakthrough came when I developed `strategic_winning_reward_func` which evaluates multiple aspects of gameplay. This evolved into a sophisticated evaluation system considering:
+
+* Game stage-specific strategies (early, mid, and late game)
+* Threat detection and creation
+* Blocking opponent's winning paths
+* Setting up connected structures
+* Creating "trap" positions that force opponent errors
+
+The most challenging aspect was balancing these elements dynamically as the game progressed.
+
+**Data Hurdles:** The format of game data for an LLM is crucial because structured and well-formatted data enables the model to understand context, spatial relationships, and the rules of the game more effectively. Simply listing moves like "a1, b1, c1" proved inadequate, as the model struggled to interpret the board state and make strategic decisions. The evolution to dataset v3 included critical improvements:
+
+* Representing the board as coordinate lists like "a1(X), b1(O)"
+* Including "Next available position per column" to help the model understand valid moves
+* Structuring prompts to emphasize player identity and game state
+* Using XML format tags to enforce consistent response structure
+
+This reformatting dramatically improved the model's ability to make legal moves and develop coherent strategies.
+
+**Why Qwen 2.5 0.5B?**
+
+Due to imposed limitations like time, compute, and such, a model of smaller size is preferred for faster prototyping. Compared to larger models like Qwen/Qwen2.5-1.5B-Instruct or even Llama-based models, Qwen 2.5 0.5B strikes a balance between performance and resource efficiency, making it ideal for rapid experimentation and iteration. Additionally, the model selection can be easily scaled up later to larger variants without requiring significant code modifications, ensuring flexibility for future improvements.
+
+**Overcoming Challenges:** The persistent negative validity reward, which penalizes the model for generating invalid moves or responses, required significant debugging. This issue arose because the model would consistently respond in incorrect formats or make illegal moves, hindering its ability to play the game effectively. By implementing strict format validation through `strict_move_format_reward_func` and `xml_count_reward_func`, I was able to dramatically improve the model's compliance with game rules. Managing scope meant making the critical decision to focus on "competent" play rather than "expert" AI. Rather than pursuing perfect play that would require massive compute resources, I oriented my reward functions toward making the game enjoyable and challenging for human players. Although the current model is barely trained on 250 steps so far and requires at least a minimum of 1000-2000 and up to 5000 steps.
+
+**Future Vision:** While the current AI is not yet playable, the next steps could involve scaling to larger models like Qwen2.5-1.5B or even 7B variants for more sophisticated play. The UI could be enhanced with a Unity-based interface for better graphics and user experience. On the technical side, a 2 stage finetuning plan is required for better task adherence and intelligence:
+
+1. **Stage 1 - Domain/Task Knowledge Finetuning:** This stage involves training the model on a curated dataset specific to Connect Four (or any other task) to ensure it understands the rules, strategies, and nuances of the game. This provides the model with a strong foundation of domain knowledge.
+2. **Stage 2 - GRPO (Reinforcement Learning) Finetuning:** In this stage, the model is fine-tuned using Group Relative Policy Optimization (GRPO) to enhance its strategic reasoning and decision-making capabilities, resulting in significant performance improvements.
+
+This project laid the groundwork for my continuing interest in reinforcement learning for game AI, demonstrating that even small language models can learn strategic reasoning when properly guided through well-designed reward systems.
