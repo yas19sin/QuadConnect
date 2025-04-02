@@ -16,7 +16,7 @@ This project was developed as a Portfolio Project for the [ALX Software Engineer
 
 * **Live Demo:** [Play Quad Connect on Hugging Face Spaces](https://huggingface.co/spaces/Lyte/QuadConnect-beta)
 * **Model Card:** [Lyte/QuadConnect2.5-0.5B-v0.0.9b on Hugging Face](https://huggingface.co/Lyte/QuadConnect2.5-0.5B-v0.0.9b)
-* **Project Blog Post:** [TBD]
+* **Project Blog Post:** [LinkedIn Blog Post](https://www.linkedin.com/posts/kandir-research-33387b359_github-yas19sinquadconnect-activity-7313202515234152450-qhSt)
 * **Developer LinkedIn:** [LinkedIn](https://www.linkedin.com/in/ennaour/)
 
 ## ✨ Features
